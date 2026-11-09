@@ -5,4 +5,6 @@ LLM components built from scratch, one numbered folder per stage. Each file expl
 - `02-embeddings/` — token embeddings, positional encoding
 - `03-attention/` — scaled dot-product, causal mask, multi-head, RoPE, ALiBi, GQA, sliding window
 
+Setup: `pip install -r requirements.txt` (numpy; tokenization is stdlib-only). Run any file directly: `python3 03-attention/01_scaled_dot_product.py`.
+
 Roadmap: transformer block, mini-GPT, training, architectures, post-training, efficiency, eval. See [PLAN.md](PLAN.md).
