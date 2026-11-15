@@ -8,15 +8,23 @@ Build LLM components from scratch, stdlib for tokenization, numpy from 02 onward
 - [x] `02-embeddings/` — token embedding, positional encoding (sinusoidal, learned)
 - [x] `03-attention/` — scaled dot-product, multi-head, causal mask, RoPE, ALiBi, GQA, MQA, sliding window
 - [x] `04-transformer-block/` — LayerNorm, RMSNorm, MLP/SwiGLU, MoE, pre-norm block with batching + residuals
+- [x] `05-gpt/` — mini-GPT (weight-tied, untrained), sampling (greedy/temperature/top-k/top-p), KV cache + generation
 
 ## Next
 
-- [ ] `05-gpt/` — mini-GPT, KV cache, sampling (greedy/top-k/top-p/temperature)
-- [ ] `06-training/` — custom loop, LR schedule, grad clipping, mixed precision, checkpointing
+- [ ] `06-training/` — hand-written numpy backprop for the GPT (gradient-checked), AdamW, LR schedule, grad clipping, loss scaling, checkpointing, training loop (dense SwiGLU block only; MoE backward skipped)
 - [ ] `07-architectures/` — encoder-only (BERT), encoder-decoder (T5)
 - [ ] `08-post-training/` — LoRA, SFT, DPO, simplified RLHF
 - [ ] `09-efficiency/` — quantization, pruning, distillation
 - [ ] `10-eval/` — perplexity, benchmark harness
+
+## Backlog (unscheduled)
+
+- RNN/LSTM baseline for comparison with the Transformer
+- Flash-attention-style blockwise softmax (memory-efficient attention)
+- Tokenizer and model config serialization (save/load)
+- Compare these tokenizers against tiktoken / Hugging Face tokenizers
+- Multilingual / script-aware tokenizers (CJK, Indic); image and audio tokenizers (stretch)
 
 Design notes:
 - Attention files (03) are 2-D `(seq, d)` for clarity; batching is added in `04-transformer-block/` via numpy broadcasting.
