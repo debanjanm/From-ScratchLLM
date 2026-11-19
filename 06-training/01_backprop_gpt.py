@@ -141,20 +141,26 @@ class TrainableGPT:
         xf, cn = rms_fwd(x, p["nf"])
         return xf @ p["tok"].T, (ids, caches, cn, xf)
 
-    def loss_and_grads(self, ids):
-        """Next-token cross-entropy over ids (B,T), and gradients for every parameter."""
+    def loss_and_grads(self, ids, loss_mask=None):
+        """Next-token cross-entropy over ids (B,T), and gradients for every parameter.
+
+        loss_mask (optional, shape (B, T-1), 1 = count, 0 = ignore) says which TARGET positions
+        (ids[:, 1:]) contribute to the loss. None = all of them. Used by SFT to train on
+        response tokens only."""
         p, g = self.params, {}
         logits, (ids_, caches, cn, xf) = self.forward(ids)
         B, T, V = logits.shape
 
         probs = softmax(logits[:, :-1])
         tgt = ids[:, 1:, None]
-        N = B * (T - 1)
-        loss = float(-np.log(np.take_along_axis(probs, tgt, axis=-1)).mean())
+        w = np.ones((B, T - 1)) if loss_mask is None else np.asarray(loss_mask, dtype=float)
+        N = w.sum()
+        picked = np.take_along_axis(probs, tgt, axis=-1)[..., 0]
+        loss = float(-(np.log(picked) * w).sum() / N)
         dl = probs.copy()
         np.put_along_axis(dl, tgt, np.take_along_axis(dl, tgt, axis=-1) - 1, axis=-1)
         dlogits = np.zeros_like(logits)
-        dlogits[:, :-1] = dl / N
+        dlogits[:, :-1] = dl * w[..., None] / N
 
         g["tok"] = dlogits.reshape(-1, V).T @ xf.reshape(-1, xf.shape[-1])
         dx, g["nf"] = rms_bwd(dlogits @ p["tok"], cn)
