@@ -14,7 +14,7 @@ Build LLM components from scratch, stdlib for tokenization, numpy from 02 onward
 
 ## Next
 
-- [ ] `08-post-training/` — LoRA, SFT, DPO, simplified RLHF
+- [ ] `08-post-training/` — LoRA (done: `01_lora.py`), SFT (done: `02_sft.py`), DPO, simplified RLHF
 - [ ] `09-efficiency/` — quantization, pruning, distillation
 - [ ] `10-eval/` — perplexity, benchmark harness
 
