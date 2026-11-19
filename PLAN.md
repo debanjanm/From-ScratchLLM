@@ -11,10 +11,10 @@ Build LLM components from scratch, stdlib for tokenization, numpy from 02 onward
 - [x] `05-gpt/` — mini-GPT (weight-tied, untrained), sampling (greedy/temperature/top-k/top-p), KV cache + generation
 - [x] `06-training/` — hand-written numpy backprop for the GPT (gradient-checked), AdamW, LR schedule, grad clipping, loss-scaling demo, checkpointing, char-level training loop (dense SwiGLU only; MoE backward skipped)
 - [x] `07-architectures/` — general attention (cross/bidirectional, with backward), BERT masked-LM, T5-style encoder-decoder; all gradient-checked and trained
+- [x] `08-post-training/` — LoRA, SFT (response-only loss), DPO, simplified RLHF (reward model + PPO-clip with KL penalty); all gradient-checked
 
 ## Next
 
-- [ ] `08-post-training/` — LoRA (done: `01_lora.py`), SFT (done: `02_sft.py`), DPO (done: `03_dpo.py`), simplified RLHF
 - [ ] `09-efficiency/` — quantization, pruning, distillation
 - [ ] `10-eval/` — perplexity, benchmark harness
 
