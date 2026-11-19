@@ -164,8 +164,19 @@ class TrainableGPT:
         dlogits = np.zeros_like(logits)
         dlogits[:, :-1] = dl * w[..., None] / N
 
-        g["tok"] = dlogits.reshape(-1, V).T @ xf.reshape(-1, xf.shape[-1])
-        dx, g["nf"] = rms_bwd(dlogits @ p["tok"], cn)
+        return loss, self.backward(ids, (ids_, caches, cn, xf), dlogits=dlogits)
+
+    def backward(self, ids, cache, dlogits=None, dxf=None):
+        """Backprop from the gradient at the tied-head logits (dlogits), at the final normalized
+        hidden state (dxf, e.g. a reward-model readout), or both. Returns grads for every param."""
+        p, g = self.params, {}
+        _, caches, cn, xf = cache
+        total = 0 if dxf is None else dxf
+        g["tok"] = np.zeros_like(p["tok"])
+        if dlogits is not None:
+            g["tok"] = dlogits.reshape(-1, dlogits.shape[-1]).T @ xf.reshape(-1, xf.shape[-1])
+            total = total + dlogits @ p["tok"]
+        dx, g["nf"] = rms_bwd(total, cn)
         for l in reversed(range(self.L)):
             c1, ca, c2, cf = caches[l]
             df, g[f"{l}.W1"], g[f"{l}.W3"], g[f"{l}.W2"] = ffn_bwd(
@@ -179,7 +190,7 @@ class TrainableGPT:
         np.add.at(g["tok"], ids, dx)                              # embedding lookup scatter
         g["pos"] = np.zeros_like(p["pos"])
         g["pos"][:ids.shape[1]] = dx.sum(axis=0)
-        return loss, g
+        return g
 
 
 def grad_check(model, ids, per_param=3, h=1e-5, seed=0):
