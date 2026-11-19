@@ -9,10 +9,10 @@ Build LLM components from scratch, stdlib for tokenization, numpy from 02 onward
 - [x] `03-attention/` — scaled dot-product, multi-head, causal mask, RoPE, ALiBi, GQA, MQA, sliding window
 - [x] `04-transformer-block/` — LayerNorm, RMSNorm, MLP/SwiGLU, MoE, pre-norm block with batching + residuals
 - [x] `05-gpt/` — mini-GPT (weight-tied, untrained), sampling (greedy/temperature/top-k/top-p), KV cache + generation
+- [x] `06-training/` — hand-written numpy backprop for the GPT (gradient-checked), AdamW, LR schedule, grad clipping, loss-scaling demo, checkpointing, char-level training loop (dense SwiGLU only; MoE backward skipped)
 
 ## Next
 
-- [ ] `06-training/` — hand-written numpy backprop for the GPT (gradient-checked), AdamW, LR schedule, grad clipping, loss scaling, checkpointing, training loop (dense SwiGLU block only; MoE backward skipped)
 - [ ] `07-architectures/` — encoder-only (BERT), encoder-decoder (T5)
 - [ ] `08-post-training/` — LoRA, SFT, DPO, simplified RLHF
 - [ ] `09-efficiency/` — quantization, pruning, distillation

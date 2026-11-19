@@ -6,7 +6,8 @@ LLM components built from scratch, one numbered folder per stage. Each file expl
 - `03-attention/` — scaled dot-product, causal mask, multi-head, RoPE, ALiBi, GQA, sliding window
 - `04-transformer-block/` — LayerNorm, RMSNorm, MLP/SwiGLU, MoE, full pre-norm block
 - `05-gpt/` — mini-GPT model, sampling strategies, KV cache generation
+- `06-training/` — hand-written backprop (gradient-checked), AdamW, LR schedule, clipping, checkpointing, training loop
 
 Setup: `pip install -r requirements.txt` (numpy; tokenization is stdlib-only). Run any file directly: `python3 03-attention/01_scaled_dot_product.py`.
 
-Roadmap: training, architectures, post-training, efficiency, eval. See [PLAN.md](PLAN.md).
+Roadmap: architectures, post-training, efficiency, eval. See [PLAN.md](PLAN.md).
