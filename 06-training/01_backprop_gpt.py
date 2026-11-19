@@ -141,12 +141,14 @@ class TrainableGPT:
         xf, cn = rms_fwd(x, p["nf"])
         return xf @ p["tok"].T, (ids, caches, cn, xf)
 
-    def loss_and_grads(self, ids, loss_mask=None):
+    def loss_and_grads(self, ids, loss_mask=None, normalize=True):
         """Next-token cross-entropy over ids (B,T), and gradients for every parameter.
 
         loss_mask (optional, shape (B, T-1), 1 = count, 0 = ignore) says which TARGET positions
         (ids[:, 1:]) contribute to the loss. None = all of them. Used by SFT to train on
-        response tokens only."""
+        response tokens only. loss_mask may hold arbitrary real (even negative) weights; with
+        normalize=False the loss is -sum(w * logp) instead of a weighted mean, so the returned
+        gradients are exactly -sum(w * grad logp). DPO uses that to weight sequence log-probs."""
         p, g = self.params, {}
         logits, (ids_, caches, cn, xf) = self.forward(ids)
         B, T, V = logits.shape
@@ -154,7 +156,7 @@ class TrainableGPT:
         probs = softmax(logits[:, :-1])
         tgt = ids[:, 1:, None]
         w = np.ones((B, T - 1)) if loss_mask is None else np.asarray(loss_mask, dtype=float)
-        N = w.sum()
+        N = w.sum() if normalize else 1.0
         picked = np.take_along_axis(probs, tgt, axis=-1)[..., 0]
         loss = float(-(np.log(picked) * w).sum() / N)
         dl = probs.copy()
